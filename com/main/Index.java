@@ -1,12 +1,17 @@
 package main;
+import entities.*;
+import interfaces.Dao;
+import java.sql.SQLException;
 
 
 public class Index{
-	public static void main(String [] arg) {
+	public static void main(String [] arg) throws SQLException{
+		StudentDao dao = new StudentDao();
 		
-System.out.print("TEST");
-		
+		for (Student student: dao.selectAll()){
+			System.out.println(student.toString());
+		}		
   }
 
 
-}
+}	
