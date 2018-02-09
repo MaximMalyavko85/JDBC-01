@@ -29,15 +29,16 @@ public class StudentDao  implements Dao {
 
 	@Override
 	public List <Student> selectAll() throws SQLException{
-		Connection conn = getConnection();
-		Statement statement = null;
 		ResultSet rs = null;
+		
 
-		try{
+		try (Connection conn = getConnection();			
+			Statement statement = conn.createStatement())
+		{
 			conn.setTransactionIsolation(Connection.TRANSACTION_SERIALIZABLE);
-			//conn.setAutoCommit(true);
-			statement = conn.createStatement();
 			rs=statement.executeQuery(SELECT_ALL_SQL);
+			//conn.setAutoCommit(true);
+			
 			List <Student> list  = new ArrayList<Student>();
 			while (rs.next()){
 				int id = rs.getInt("id");
@@ -56,35 +57,12 @@ public class StudentDao  implements Dao {
 			return list;
 		}
 		catch (Exception e){
-			conn.rollback();
+			//conn.rollback();
 			System.out.println("Error in connection");
 			e.printStackTrace();
 			return null;
 		}
-		 finally{
-				try{
-					rs.close();
-				}
-				catch (Exception e){
-					System.out.println("Can't close a ResultSet");
-					e.printStackTrace();
-				}finally{
-					try{
-						statement.close();
-					}catch (Exception e){
-						System.out.println("Can't close a statement");
-						e.printStackTrace();
-
-					}finally{
-						try{
-							conn.close();
-						}catch(Exception e){
-							System.out.println("Can't close a connection");
-							e.printStackTrace();
-						}
-					}
-				}
-		}
+		 
 	}
 }
 
