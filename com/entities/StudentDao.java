@@ -55,7 +55,7 @@ public class StudentDao  implements Dao {
 			//conn.commit();
 			return list;
 		}
-		catch (SQLException e){
+		catch (Exception e){
 			conn.rollback();
 			System.out.println("Error in connection");
 			e.printStackTrace();
