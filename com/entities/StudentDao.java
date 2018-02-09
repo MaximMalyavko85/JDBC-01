@@ -63,15 +63,27 @@ public class StudentDao  implements Dao {
 		}
 		 finally{
 				try{
-					conn.close();
-					statement.close();
 					rs.close();
 				}
 				catch (Exception e){
-					System.out.println("Can't close a connection or iterator or statement");
+					System.out.println("Can't close a ResultSet");
 					e.printStackTrace();
+				}finally{
+					try{
+						statement.close();
+					}catch (Exception e){
+						System.out.println("Can't close a statement");
+						e.printStackTrace();
+
+					}finally{
+						try{
+							conn.close();
+						}catch(Exception e){
+							System.out.println("Can't close a connection");
+							e.printStackTrace();
+						}
+					}
 				}
-								
 		}
 	}
 }
