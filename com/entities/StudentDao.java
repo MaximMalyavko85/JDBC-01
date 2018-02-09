@@ -5,9 +5,6 @@ import java.sql.*;
 import java.util.*;
 import com.mysql.jdbc.Driver;
 
-
-
-
 public class StudentDao  implements Dao {
 	public static final String DRIVER_CLASS_NAME = "com.mysql.jdbc.Driver";
 	public static final String JDBC_URL = "jdbc:mysql://localhost:3306/student";
@@ -15,16 +12,15 @@ public class StudentDao  implements Dao {
 	public static final String PASSWORD ="root";
 	public static final String SELECT_ALL_SQL ="SELECT *from students";
 
-
-	static {
+	public StudentDao(){
 		System.out.println("Registering JDBC driver...");
 		try {
-            Class.forName(DRIVER_CLASS_NAME);
-            System.out.println("Connection success");
-        } catch (ClassNotFoundException e) {
-            System.out.println("Driver can not be registered");
-            e.printStackTrace();
-        }
+			Class.forName(DRIVER_CLASS_NAME);
+			System.out.println("Connection success");
+		} catch (ClassNotFoundException e) {
+			System.out.println("Driver can not be registered");
+			e.printStackTrace();
+		}
 	}
 
 	private Connection getConnection() throws SQLException{
@@ -39,7 +35,7 @@ public class StudentDao  implements Dao {
 
 		try{
 			conn.setTransactionIsolation(Connection.TRANSACTION_SERIALIZABLE);
-			conn.setAutoCommit(false);
+			//conn.setAutoCommit(true);
 			statement = conn.createStatement();
 			rs=statement.executeQuery(SELECT_ALL_SQL);
 			List <Student> list  = new ArrayList<Student>();
@@ -56,7 +52,7 @@ public class StudentDao  implements Dao {
 				student.setCource(cource);
 				list.add(student);
 			}
-			conn.commit();
+			//conn.commit();
 			return list;
 		}
 		catch (SQLException e){
@@ -66,11 +62,17 @@ public class StudentDao  implements Dao {
 			return null;
 		}
 		 finally{
-			rs.close();
-			statement.close();
-			conn.close();
+			try{
+				conn.close();
+				statement.close();
+				rs.close();
+			}
+			catch (Exception e){
+				System.out.println("Can't close a connection or iterator or statement");
+				e.printStackTrace();
+			}
+								
 		}
-		
 	}
 }
 
