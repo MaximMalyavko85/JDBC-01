@@ -1,5 +1,5 @@
-package interfaces;
-import entities.Student;
+package com.interfaces;
+import com.entities.Student;
 import java.util.*;
 import java.sql.SQLException;
 

@@ -1,6 +1,6 @@
-package main;
-import entities.*;
-import interfaces.Dao;
+package com.main;
+import com.entities.*;
+import com.interfaces.Dao;
 import java.sql.SQLException;
 
 

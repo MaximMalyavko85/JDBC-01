@@ -1,6 +1,6 @@
-package entities;
-import entities.Student;
-import interfaces.Dao;
+package com.entities;
+import com.entities.Student;
+import com.interfaces.Dao;
 import java.sql.*;
 import java.util.*;
 import com.mysql.jdbc.Driver;
@@ -26,16 +26,13 @@ public class StudentDao  implements Dao {
             e.printStackTrace();
         }
 	}
-	
 
-	private Connection getConnection() throws SQLException {
-		
-			return DriverManager.getConnection(JDBC_URL, LOGIN, PASSWORD);
+	private Connection getConnection() throws SQLException{
+		return DriverManager.getConnection(JDBC_URL, LOGIN, PASSWORD);
 	}
 
-
 	@Override
-	public List <Student> selectAll() throws SQLException  {
+	public List <Student> selectAll() throws SQLException{
 		Connection conn = getConnection();
 		Statement statement = null;
 		ResultSet rs = null;
@@ -45,7 +42,7 @@ public class StudentDao  implements Dao {
 			conn.setAutoCommit(false);
 			statement = conn.createStatement();
 			rs=statement.executeQuery(SELECT_ALL_SQL);
-			List <Student> list  = new ArrayList<>();
+			List <Student> list  = new ArrayList<Student>();
 			while (rs.next()){
 				int id = rs.getInt("id");
 				String name = rs.getString("name");
@@ -62,12 +59,12 @@ public class StudentDao  implements Dao {
 			conn.commit();
 			return list;
 		}
-		  //catch (SQLException e){
-			//jdbcUtils.rollbackQuietly(conn);
-			//System.out.println("Error in connection");
-			//e.printStackTrace();
-
-		//}
+		catch (SQLException e){
+			conn.rollback();
+			System.out.println("Error in connection");
+			e.printStackTrace();
+			return null;
+		}
 		 finally{
 			rs.close();
 			statement.close();
