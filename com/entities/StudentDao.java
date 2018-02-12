@@ -31,7 +31,6 @@ public class StudentDao  implements Dao {
 	public List <Student> selectAll() throws SQLException{
 		ResultSet rs = null;
 		
-
 		try (Connection conn = getConnection();			
 			Statement statement = conn.createStatement())
 		{
@@ -54,6 +53,9 @@ public class StudentDao  implements Dao {
 			}
 			
 			return list;
+		}
+		finally{
+			rs.close();
 		}
 		
 		 
