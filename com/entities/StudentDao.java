@@ -37,8 +37,7 @@ public class StudentDao  implements Dao {
 		{
 			conn.setTransactionIsolation(Connection.TRANSACTION_SERIALIZABLE);
 			rs=statement.executeQuery(SELECT_ALL_SQL);
-			//conn.setAutoCommit(true);
-			
+						
 			List <Student> list  = new ArrayList<Student>();
 			while (rs.next()){
 				int id = rs.getInt("id");
@@ -53,15 +52,10 @@ public class StudentDao  implements Dao {
 				student.setCource(cource);
 				list.add(student);
 			}
-			//conn.commit();
+			
 			return list;
 		}
-		catch (Exception e){
-			//conn.rollback();
-			System.out.println("Error in connection");
-			e.printStackTrace();
-			return null;
-		}
+		
 		 
 	}
 }
