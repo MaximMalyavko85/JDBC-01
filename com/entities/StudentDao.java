@@ -30,35 +30,40 @@ public class StudentDao  implements Dao {
 	@Override
 	public List <Student> selectAll() throws SQLException{
 		ResultSet rs = null;
-		
-		try (Connection conn = getConnection();			
-			Statement statement = conn.createStatement())
-		{
-			conn.setTransactionIsolation(Connection.TRANSACTION_SERIALIZABLE);
-			rs=statement.executeQuery(SELECT_ALL_SQL);
+		Connection conn = null;
+		Statement statement =null;
+		try{
+			conn = getConnection();
+			try {
+			   statement = conn.createStatement();
+			    try {
+			        rs=statement.executeQuery(SELECT_ALL_SQL);
 						
-			List <Student> list  = new ArrayList<Student>();
-			while (rs.next()){
-				int id = rs.getInt("id");
-				String name = rs.getString("name");
-				int age = rs.getInt("age");
-				int cource = rs.getInt("cource");
+					List <Student> list  = new ArrayList<Student>();
+					while (rs.next()){
+						int id = rs.getInt("id");
+						String name = rs.getString("name");
+						int age = rs.getInt("age");
+						int cource = rs.getInt("cource");
 
-				Student student = new Student();
-				student.setId(id);
-				student.setName(name);
-				student.setAge(age);
-				student.setCource(cource);
-				list.add(student);
-			}
-			
-			return list;
-		}
-		finally{
-			rs.close();
-		}
-		
-		 
+						Student student = new Student();
+						student.setId(id);
+						student.setName(name);
+						student.setAge(age);
+						student.setCource(cource);
+						list.add(student);
+					}
+					return list;
+				}	
+			    finally {         
+			            rs.close();
+			      		}
+			} finally {
+			        statement.close();
+			    	  }
+		} finally {
+			    conn.close();
+				  }
 	}
 }
 
