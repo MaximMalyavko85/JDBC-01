@@ -4,18 +4,21 @@ import com.interfaces.Dao;
 import java.sql.*;
 import java.util.*;
 import com.mysql.jdbc.Driver;
+import java.io.*;
 
-public class StudentDao  implements Dao {
-	public static final String DRIVER_CLASS_NAME = "com.mysql.jdbc.Driver";
-	public static final String JDBC_URL = "jdbc:mysql://localhost:3306/student";
-	public static final String LOGIN = "root"; 
-	public static final String PASSWORD ="root";
-	public static final String SELECT_ALL_SQL ="SELECT *from students";
-
+public class StudentDao implements Dao {
+	Properties prop;
+	
 	public StudentDao(){
-		System.out.println("Registering JDBC driver...");
+		prop = new Properties();
+		try{
+			prop.load(new FileInputStream ("com/properties/setDb.properties"));
+		}catch(IOException e){
+			e.printStackTrace();
+		}
+		
 		try {
-			Class.forName(DRIVER_CLASS_NAME);
+			Class.forName(prop.getProperty("DRIVER_CLASS_NAME"));
 			System.out.println("Connection success");
 		} catch (ClassNotFoundException e) {
 			System.out.println("Driver can not be registered");
@@ -24,7 +27,7 @@ public class StudentDao  implements Dao {
 	}
 
 	private Connection getConnection() throws SQLException{
-		return DriverManager.getConnection(JDBC_URL, LOGIN, PASSWORD);
+		return DriverManager.getConnection(prop.getProperty("JDBC_URL"), prop.getProperty("LOGIN"), prop.getProperty("PASSWORD"));
 	}
 
 	@Override
@@ -32,14 +35,13 @@ public class StudentDao  implements Dao {
 		ResultSet rs = null;
 		Connection conn = null;
 		Statement statement = null;
+		List <Student> list  = new ArrayList<Student>();
 		try 
 		{	
 			conn = getConnection();			
 			statement = conn.createStatement();
-			conn.setTransactionIsolation(Connection.TRANSACTION_SERIALIZABLE);
-			rs=statement.executeQuery(SELECT_ALL_SQL);
+			rs=statement.executeQuery(prop.getProperty("SELECT_ALL_SQL"));
 						
-			List <Student> list  = new ArrayList<Student>();
 			while (rs.next()){
 				int id = rs.getInt("id");
 				String name = rs.getString("name");
@@ -53,33 +55,37 @@ public class StudentDao  implements Dao {
 				student.setCource(cource);
 				list.add(student);
 			}
-			
-			return list;
+						
 		}catch(SQLException e) {
 			e.printStackTrace();
-			return null;
 		}finally{
 			if (rs != null){
-		    	try {rs.close();}
-		    	catch (SQLException e) { e.printStackTrace();}
+		    	try {
+		    		rs.close();
+		    	}
+		    	catch (SQLException e) {
+		    		e.printStackTrace();
+		    	}
 			}
 			if (statement != null){
-		    	try { statement.close();}
-		    	catch (SQLException e) {e.printStackTrace(); }
+		    	try {
+		    		statement.close();
+		    	}
+		    	catch (SQLException e) {
+		    		e.printStackTrace(); 
+		    	}
 		    }
 			if (conn != null){
-			    try { conn.close();}
-			    catch (SQLException e) { e.printStackTrace();}
+			    try {
+			    	conn.close();
+			    }
+			    catch (SQLException e) {
+			    	e.printStackTrace();
+			    }
 			}
 		}
-					
-		
-		
-	
 
-
-
-
+		return list;			
 	}
 }
 

@@ -10,7 +10,7 @@ public class Index{
 		
 		for (Student student: dao.selectAll()){
 			System.out.println(student.toString());
-		}		
+		}	
   }
 
 
