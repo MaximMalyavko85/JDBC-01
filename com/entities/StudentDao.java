@@ -8,12 +8,20 @@ import java.io.*;
 
 public class StudentDao implements Dao {
 	Properties prop;
+	public static String JDBC_URL;
+	public static String LOGIN;
+	public static String PASSWORD;
+	public static String SELECT_ALL;
 	
 	public StudentDao(){
-		prop = new Properties();
 		try{
+			prop = new Properties();
 			prop.load(new FileInputStream ("com/properties/setDb.properties"));
-		}catch(IOException e){
+			this.JDBC_URL = prop.getProperty("JDBC_URL");
+			this.LOGIN = prop.getProperty("LOGIN");
+			this.PASSWORD = prop.getProperty("PASSWORD");
+			this.SELECT_ALL = prop.getProperty("SELECT_ALL_SQL");
+		}catch(Exception e){
 			e.printStackTrace();
 		}
 		
@@ -27,7 +35,7 @@ public class StudentDao implements Dao {
 	}
 
 	private Connection getConnection() throws SQLException{
-		return DriverManager.getConnection(prop.getProperty("JDBC_URL"), prop.getProperty("LOGIN"), prop.getProperty("PASSWORD"));
+		return DriverManager.getConnection(this.JDBC_URL, this.LOGIN, this.PASSWORD);
 	}
 
 	@Override
@@ -40,7 +48,7 @@ public class StudentDao implements Dao {
 		{	
 			conn = getConnection();			
 			statement = conn.createStatement();
-			rs=statement.executeQuery(prop.getProperty("SELECT_ALL_SQL"));
+			rs=statement.executeQuery(this.SELECT_ALL);
 						
 			while (rs.next()){
 				int id = rs.getInt("id");
