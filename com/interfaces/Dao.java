@@ -4,6 +4,6 @@ import java.util.*;
 import java.sql.SQLException;
 
 public interface Dao{
-	public List <Student> selectAll() throws SQLException;
+	public List <Student> selectAll() throws Throwable;
 
 }

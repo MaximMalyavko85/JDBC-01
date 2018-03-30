@@ -8,38 +8,26 @@ import java.io.*;
 
 public class StudentDao implements Dao {
 	Properties prop;
-	public static String JDBC_URL;
-	public static String LOGIN;
-	public static String PASSWORD;
-	public static String SELECT_ALL;
 	
 	public StudentDao(){
-		try{
-			prop = new Properties();
-			prop.load(new FileInputStream ("com/properties/setDb.properties"));
-			this.JDBC_URL = prop.getProperty("JDBC_URL");
-			this.LOGIN = prop.getProperty("LOGIN");
-			this.PASSWORD = prop.getProperty("PASSWORD");
-			this.SELECT_ALL = prop.getProperty("SELECT_ALL_SQL");
-		}catch(Exception e){
-			e.printStackTrace();
-		}
+		prop = new Properties();
 		
 		try {
+			prop.load(new FileInputStream ("com/properties/setDb.properties"));
 			Class.forName(prop.getProperty("DRIVER_CLASS_NAME"));
 			System.out.println("Connection success");
-		} catch (ClassNotFoundException e) {
+		} catch (Exception e) {
 			System.out.println("Driver can not be registered");
 			e.printStackTrace();
 		}
 	}
 
 	private Connection getConnection() throws SQLException{
-		return DriverManager.getConnection(this.JDBC_URL, this.LOGIN, this.PASSWORD);
+		return DriverManager.getConnection(prop.getProperty("JDBC_URL"), prop.getProperty("LOGIN"), prop.getProperty("PASSWORD"));
 	}
 
 	@Override
-	public List <Student> selectAll() throws SQLException{
+	public List <Student> selectAll() throws Throwable{
 		ResultSet rs = null;
 		Connection conn = null;
 		Statement statement = null;
@@ -48,7 +36,7 @@ public class StudentDao implements Dao {
 		{	
 			conn = getConnection();			
 			statement = conn.createStatement();
-			rs=statement.executeQuery(this.SELECT_ALL);
+			rs=statement.executeQuery(prop.getProperty("SELECT_ALL_SQL"));
 						
 			while (rs.next()){
 				int id = rs.getInt("id");
@@ -67,33 +55,48 @@ public class StudentDao implements Dao {
 		}catch(SQLException e) {
 			e.printStackTrace();
 		}finally{
-			if (rs != null){
-		    	try {
-		    		rs.close();
-		    	}
-		    	catch (SQLException e) {
-		    		e.printStackTrace();
-		    	}
-			}
-			if (statement != null){
-		    	try {
-		    		statement.close();
-		    	}
-		    	catch (SQLException e) {
-		    		e.printStackTrace(); 
-		    	}
-		    }
-			if (conn != null){
-			    try {
-			    	conn.close();
-			    }
-			    catch (SQLException e) {
-			    	e.printStackTrace();
-			    }
-			}
+				try{
+					closeResurs( rs,  statement,  conn);
+				}catch(Exception e){
+					System.out.println("Родительский");
+					e.printStackTrace();
+				}
 		}
 
 		return list;			
 	}
+
+	
+	private void closeResurs(ResultSet rs, Statement statement, Connection conn) throws Exception{
+			SQLException resourceCloseError=null;
+			if(rs!=null){
+				try {
+					rs.close();
+				}catch(SQLException e){
+					resourceCloseError = e;
+				}
+			}
+					
+			if(statement!=null){					
+				try {
+					statement.close();
+				}catch(SQLException e){
+					resourceCloseError = e;
+				}
+			}
+
+			if(conn!=null){	
+				try {
+					conn.close();
+				}catch(SQLException e){
+					resourceCloseError = e;
+				}
+			}
+
+			if (resourceCloseError!=null){
+				throw resourceCloseError;
+			}	
+	}	
+			
 }
 

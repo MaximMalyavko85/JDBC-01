@@ -5,7 +5,7 @@ import java.sql.SQLException;
 
 
 public class Index{
-	public static void main(String [] arg) throws SQLException{
+	public static void main(String [] arg) throws Throwable{
 		StudentDao dao = new StudentDao();
 		
 		for (Student student: dao.selectAll()){
