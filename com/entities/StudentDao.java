@@ -9,7 +9,7 @@ import java.io.*;
 public class StudentDao implements Dao {
 	Properties prop;
 	
-	public StudentDao(){
+	public StudentDao() throws Exception{
 		prop = new Properties();
 		
 		try {
@@ -17,8 +17,8 @@ public class StudentDao implements Dao {
 			Class.forName(prop.getProperty("DRIVER_CLASS_NAME"));
 			System.out.println("Connection success");
 		} catch (Exception e) {
-			System.out.println("Driver can not be registered");
 			e.printStackTrace();
+			throw e;
 		}
 	}
 
